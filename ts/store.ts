@@ -1,15 +1,17 @@
-const initalValue = {
+import type { Player, GameState } from "./types"
+
+const initalState: GameState = {
     currentGameMoves: [],
     history: {
       currentRoundGames: [],
       allGames: [],
     },
   };
-  
+
   export default class Store {
-    constructor(key, players) {
-      this.storageKey = key;
-      this.players = players;
+    constructor(
+      private readonly storageKey: string, 
+      private readonly players: Player[]) {
     }
   
     get stats() {
@@ -72,7 +74,7 @@ const initalValue = {
       };
     }
   
-    playeMove(squareId) {
+    playeMove(squareId: number) {
       const stateClone = structuredClone(this.#getState());
   
       stateClone.currentGameMoves.push({
@@ -103,19 +105,16 @@ const initalValue = {
     newRound() {
       this.reset();
   
-      const stateClone = structuredClone(this.#getState());
+      const stateClone = structuredClone(this.#getState()) as GameState
       stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
       stateClone.history.currentRoundGames = [];
   
       this.#saveState(stateClone);
     }
   
-    #getState() {
-      const item = window.localStorage.getItem(this.storageKey);
-      return item ? JSON.parse(item) : initalValue;
-    }
+
   
-    #saveState(stateOrFn) {
+    #saveState(stateOrFn: GameState | ((prevState: GameState) => GameState)) {
       const prevState = this.#getState();
   
       let newState;
@@ -132,5 +131,10 @@ const initalValue = {
       }
   
       window.localStorage.setItem(this.storageKey, JSON.stringify(newState))
+    }
+
+    #getState() {
+      const item = window.localStorage.getItem(this.storageKey);
+      return item ? JSON.parse(item) as GameState : initalState;
     }
   }
