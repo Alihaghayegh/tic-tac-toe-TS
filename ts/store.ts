@@ -1,4 +1,4 @@
-import type { Player, GameState } from "./types";
+import type { Player, GameState, Game } from "./types";
 
 const initalState: GameState = {
   currentGameMoves: [],
