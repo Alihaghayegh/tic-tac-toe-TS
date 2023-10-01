@@ -8,11 +8,13 @@ const initalState: GameState = {
   },
 };
 
-export default class Store {
+export default class Store extends EventTarget {
   constructor(
     private readonly storageKey: string,
     private readonly players: Player[]
-  ) {}
+  ) {
+    super()
+  }
 
   get stats() {
     const state = this.#getState();
